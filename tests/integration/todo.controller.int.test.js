@@ -61,4 +61,15 @@ describe(endpointUrl, () => {
         expect(response.statusCode).toBe(404);
     });
 
+        it("DELETE " + endpointUrl, async () => {
+        const response = await request(app)
+        .delete (endpointUrl + newTodoId);
+        expect(response.statusCode).toBe(200);
+        expect(response.body._id).toBe(newTodoId);
+    });
+    it("DELETE todoId doesnt exist " + endpointUrl, async () => {
+        const response = await request(app)
+        .delete (endpointUrl + notExistingTodoId);
+        expect(response.statusCode).toBe(404);
+    });
 });
