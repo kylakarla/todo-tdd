@@ -4,7 +4,12 @@ const newTodo = require('../mock-data/new-todo.json');
 
 const endpointUrl = '/todos/';
 
-let firstTodo;
+let firstTodo, newTodoId;
+const testData = {
+    title: 'Make integration test for todo',
+    done: true
+};
+const notExistingTodoId = '62b3f5f2e1f3f531a0c6b123';
 
 describe(endpointUrl, () => {
     it("POST" + endpointUrl, async () => {
@@ -14,6 +19,7 @@ describe(endpointUrl, () => {
         expect(response.statusCode).toBe(201);
         expect(response.body.title).toBe(newTodo.title);
         expect(response.body.done).toBe(newTodo.done);
+        newTodoId = response.body._id;
     });
     it('should return 500 if info is missing', async () => {
         const response = await request(app)
@@ -38,6 +44,20 @@ describe(endpointUrl, () => {
     });
     it("GET todoById doesnt exist" + endpointUrl + ":todoId", async () => {
         const response = await request(app).get(endpointUrl + '62b3f5f2e1f3f531a0c6b123');
+        expect(response.statusCode).toBe(404);
+    });
+    it("PUT " + endpointUrl, async () => {
+        const response = await request(app)
+        .put (endpointUrl + newTodoId)
+        .send(testData);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.title).toBe(testData.title);
+        expect(response.body.done).toBe(testData.done);
+    });
+    it("PUT todoId doesnt exist " + endpointUrl, async () => {
+        const response = await request(app)
+        .put (endpointUrl + notExistingTodoId)
+        .send(testData);
         expect(response.statusCode).toBe(404);
     });
 
